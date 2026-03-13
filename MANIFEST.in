@@ -1,0 +1,12 @@
+include MANIFEST.in
+include requirements.txt
+include *.md
+include *.py
+include *.txt
+include *.toml
+recursive-include edigivault *.py
+recursive-include edigivault *.html
+recursive-include edigivault *.css
+recursive-include edigivault *.js
+recursive-include edigivault *.json
+recursive-include edigivault *.txt

@@ -1,0 +1,70 @@
+{%- extends "templates/web.html" -%}
+{%- block page_content -%}
+<style>
+  .edv-portal { max-width: 480px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; }
+  .edv-det-header { background: linear-gradient(135deg, #1A3C8E, #3366CC); color: #fff; padding: 16px 20px 24px; border-radius: 0 0 24px 24px; margin: -20px -15px 0; }
+  .edv-det-header a { color: #fff; text-decoration: none; font-size: 14px; display: block; margin-bottom: 12px; }
+  .edv-det-header h2 { font-size: 20px; font-weight: 700; margin: 0 0 4px; }
+  .edv-det-header .sub { font-size: 13px; opacity: 0.75; margin: 0; }
+  .edv-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 10px; }
+  .edv-badge-green { background: rgba(255,255,255,0.2); color: #bbf7d0; }
+  .edv-badge-amber { background: rgba(255,255,255,0.2); color: #fde68a; }
+  .edv-badge-blue { background: rgba(255,255,255,0.2); color: #bfdbfe; }
+  .edv-section-title { font-size: 16px; font-weight: 600; color: #1a1a2e; margin: 20px 0 10px; }
+  .edv-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .edv-card h4 { font-size: 14px; font-weight: 600; color: #1a1a2e; margin: 0 0 2px; }
+  .edv-card .sub { font-size: 12px; color: #6b7280; margin: 0; }
+  .edv-empty-small { text-align: center; padding: 20px; color: #9ca3af; font-size: 13px; }
+</style>
+<div class="edv-portal">
+  <div class="edv-det-header">
+    <a href="/portal/projects">&larr; Back to Projects</a>
+    <h2>{{ doc.project_name }}</h2>
+    <p class="sub">{{ doc.name }}{% if doc.client %} &middot; {{ doc.client }}{% endif %}</p>
+    <span class="edv-badge {% if doc.project_status == 'Completed' %}edv-badge-green{% elif doc.project_status == 'In Progress' %}edv-badge-blue{% else %}edv-badge-amber{% endif %}">
+      {{ doc.project_status or 'Pending' }}
+    </span>
+  </div>
+  <div style="padding: 0 4px;">
+    {% if doc.start_date or doc.service %}
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px;">
+      {% if doc.start_date %}
+      <div class="edv-card"><p class="sub">Start Date</p><h4>{{ doc.start_date }}</h4></div>
+      {% endif %}
+      {% if doc.service %}
+      <div class="edv-card"><p class="sub">Service</p><h4>{{ doc.service }}</h4></div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <h3 class="edv-section-title">Properties</h3>
+    {% if properties %}
+      {% for p in properties %}
+      <div class="edv-card">
+        <h4>{{ p.property_name }}</h4>
+        <p class="sub">{{ p.property_type or '' }}{% if p.property_address %} &middot; {{ p.property_address }}{% endif %}</p>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="edv-card edv-empty-small">No properties linked</div>
+    {% endif %}
+
+    <h3 class="edv-section-title">Estimates</h3>
+    {% if estimates %}
+      {% for e in estimates %}
+      <a href="/portal/estimates/{{ e.name }}" style="text-decoration:none;">
+        <div class="edv-card" style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <h4>{{ e.name }}</h4>
+            <p class="sub">{{ e.service }}</p>
+          </div>
+          {% if e.total_price %}<span style="font-size:16px; font-weight:700; color:#1A3C8E;">&#x20B9;{{ "{:,.0f}".format(e.total_price) }}</span>{% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    {% else %}
+      <div class="edv-card edv-empty-small">No estimates yet</div>
+    {% endif %}
+  </div>
+</div>
+{%- endblock -%}

@@ -1,0 +1,86 @@
+{%- extends "templates/web.html" -%}
+{%- block page_content -%}
+<style>
+  .edv-portal { max-width: 480px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; }
+  .edv-det-header { background: linear-gradient(135deg, #1A3C8E, #3366CC); color: #fff; padding: 16px 20px 24px; border-radius: 0 0 24px 24px; margin: -20px -15px 0; }
+  .edv-det-header a { color: #fff; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 14px; }
+  .edv-det-header h2 { font-size: 20px; font-weight: 700; margin: 0 0 4px; }
+  .edv-det-header .sub { font-size: 13px; opacity: 0.75; margin: 0; }
+  .edv-det-header .row { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+  .edv-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .edv-badge-green { background: rgba(255,255,255,0.2); color: #bbf7d0; }
+  .edv-badge-amber { background: rgba(255,255,255,0.2); color: #fde68a; }
+  .edv-badge-gray { background: rgba(255,255,255,0.2); color: #e5e7eb; }
+  .edv-det-price { font-size: 28px; font-weight: 700; }
+  .edv-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .edv-info-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .edv-info-card .lbl { font-size: 11px; color: #9ca3af; margin: 0 0 2px; }
+  .edv-info-card .val { font-size: 14px; font-weight: 500; color: #1a1a2e; margin: 0; }
+  .edv-step { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; gap: 12px; }
+  .edv-step-num { width: 32px; height: 32px; border-radius: 50%; background: #1A3C8E; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .edv-step h4 { font-size: 14px; font-weight: 600; color: #1a1a2e; margin: 0 0 4px; }
+  .edv-step .desc { font-size: 12px; color: #6b7280; margin: 0 0 6px; }
+  .edv-step .meta { font-size: 11px; color: #3366CC; }
+  .edv-section-title { font-size: 16px; font-weight: 600; color: #1a1a2e; margin: 24px 0 12px; }
+  .edv-remark { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 14px; margin-top: 16px; }
+  .edv-remark .lbl { font-size: 12px; color: #92400e; font-weight: 500; margin: 0 0 4px; }
+  .edv-remark p { font-size: 13px; color: #78350f; margin: 0; }
+</style>
+<div class="edv-portal">
+  <div class="edv-det-header">
+    <a href="/portal/estimates">&larr; Back to Estimates</a>
+    <h2>{{ doc.name }}</h2>
+    <p class="sub">{{ doc.service }}</p>
+    <div class="row">
+      <span class="edv-badge {% if doc.estimate_status == 'Approved' %}edv-badge-green{% elif doc.estimate_status == 'Draft' %}edv-badge-gray{% else %}edv-badge-amber{% endif %}">
+        {{ doc.estimate_status }}
+      </span>
+      <span class="edv-det-price">&#x20B9;{{ "{:,.0f}".format(doc.total_price or 0) }}</span>
+    </div>
+  </div>
+
+  <div style="padding: 0 4px;">
+    <!-- Info Cards -->
+    <div class="edv-info-grid">
+      <div class="edv-info-card">
+        <p class="lbl">Client</p>
+        <p class="val">{{ doc.client or 'N/A' }}</p>
+      </div>
+      <div class="edv-info-card">
+        <p class="lbl">Duration</p>
+        <p class="val">{{ doc.total_time_days or 0 }} days</p>
+      </div>
+      <div class="edv-info-card">
+        <p class="lbl">Property</p>
+        <p class="val">{{ doc.property or 'N/A' }}</p>
+      </div>
+      <div class="edv-info-card">
+        <p class="lbl">Date</p>
+        <p class="val">{{ doc.estimate_date or 'N/A' }}</p>
+      </div>
+    </div>
+
+    <!-- Process Steps -->
+    {% if steps %}
+    <h3 class="edv-section-title">Process steps</h3>
+    {% for step in steps %}
+    <div class="edv-step">
+      <div class="edv-step-num">{{ step.step_number or loop.index }}</div>
+      <div style="flex:1;">
+        <h4>{{ step.process_name }}</h4>
+        {% if step.description %}<p class="desc">{{ step.description }}</p>{% endif %}
+        <span class="meta">{{ step.date_from }} &rarr; {{ step.date_to }}{% if step.duration_days %} ({{ step.duration_days }}d){% endif %}</span>
+      </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if doc.change_remark %}
+    <div class="edv-remark">
+      <p class="lbl">Remarks</p>
+      <p>{{ doc.change_remark }}</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{%- endblock -%}

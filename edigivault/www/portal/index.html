@@ -1,0 +1,171 @@
+{%- extends "templates/web.html" -%}
+
+{%- block page_content -%}
+<style>
+  .edv-portal { max-width: 480px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; }
+  .edv-header { background: linear-gradient(135deg, #1A3C8E, #3366CC); color: #fff; padding: 24px 20px 32px; border-radius: 0 0 24px 24px; margin: -20px -15px 0; }
+  .edv-header h2 { font-size: 22px; font-weight: 700; margin: 0; }
+  .edv-header p { opacity: 0.75; font-size: 13px; margin: 4px 0 0; }
+  .edv-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 16px; }
+  .edv-stat { background: rgba(255,255,255,0.15); border-radius: 12px; padding: 12px 8px; text-align: center; }
+  .edv-stat .num { font-size: 24px; font-weight: 700; }
+  .edv-stat .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; }
+  .edv-section { margin-top: 24px; }
+  .edv-section-title { font-size: 16px; font-weight: 600; color: #1a1a2e; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .edv-section-title a { font-size: 13px; color: #3366CC; text-decoration: none; font-weight: 500; }
+  .edv-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .edv-card-row { display: flex; justify-content: space-between; align-items: center; }
+  .edv-card h4 { font-size: 14px; font-weight: 600; color: #1a1a2e; margin: 0 0 2px; }
+  .edv-card .sub { font-size: 12px; color: #6b7280; margin: 0; }
+  .edv-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .edv-badge-green { background: #dcfce7; color: #166534; }
+  .edv-badge-blue { background: #dbeafe; color: #1e40af; }
+  .edv-badge-amber { background: #fef3c7; color: #92400e; }
+  .edv-badge-gray { background: #f3f4f6; color: #4b5563; }
+  .edv-badge-red { background: #fee2e2; color: #991b1b; }
+  .edv-price { font-size: 16px; font-weight: 700; color: #1A3C8E; }
+  .edv-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 20px; }
+  .edv-action { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 16px 8px; text-align: center; text-decoration: none; color: #1a1a2e; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .edv-action:hover { border-color: #3366CC; box-shadow: 0 2px 8px rgba(26,60,142,0.1); }
+  .edv-action svg { display: block; margin: 0 auto 6px; }
+  .edv-action span { font-size: 11px; font-weight: 500; }
+  .edv-empty { text-align: center; padding: 32px; color: #9ca3af; font-size: 14px; }
+  .edv-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-around; padding: 8px 0 max(8px, env(safe-area-inset-bottom)); z-index: 50; }
+  .edv-nav a { display: flex; flex-direction: column; align-items: center; gap: 2px; text-decoration: none; color: #9ca3af; font-size: 10px; padding: 4px 12px; }
+  .edv-nav a.active { color: #1A3C8E; font-weight: 600; }
+  .edv-nav svg { width: 20px; height: 20px; }
+  .edv-bottom-spacer { height: 80px; }
+</style>
+
+<div class="edv-portal">
+  <!-- Header -->
+  <div class="edv-header">
+    <p>Welcome back,</p>
+    <h2>{{ user_name }}</h2>
+    <div class="edv-stats">
+      <div class="edv-stat"><div class="num">{{ project_count }}</div><div class="lbl">Projects</div></div>
+      <div class="edv-stat"><div class="num">{{ property_count }}</div><div class="lbl">Properties</div></div>
+      <div class="edv-stat"><div class="num">{{ estimate_count }}</div><div class="lbl">Estimates</div></div>
+      <div class="edv-stat"><div class="num">{{ lead_count }}</div><div class="lbl">Leads</div></div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="edv-actions">
+    <a href="/portal/projects" class="edv-action">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1A3C8E" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+      <span>Projects</span>
+    </a>
+    <a href="/portal/properties" class="edv-action">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1A3C8E" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span>Properties</span>
+    </a>
+    <a href="/portal/services" class="edv-action">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1A3C8E" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+      <span>Services</span>
+    </a>
+    <a href="/portal/estimates" class="edv-action">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1A3C8E" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      <span>Estimates</span>
+    </a>
+  </div>
+
+  <!-- Recent Projects -->
+  <div class="edv-section">
+    <div class="edv-section-title">
+      Recent projects
+      <a href="/portal/projects">View all &rsaquo;</a>
+    </div>
+    {% if projects %}
+      {% for p in projects %}
+      <a href="/portal/projects/{{ p.name }}" style="text-decoration:none;">
+        <div class="edv-card">
+          <div class="edv-card-row">
+            <div>
+              <h4>{{ p.project_name }}</h4>
+              <p class="sub">{{ p.name }}{% if p.client %} &middot; {{ p.client }}{% endif %}</p>
+            </div>
+            <span class="edv-badge {% if p.project_status == 'Completed' %}edv-badge-green{% elif p.project_status == 'In Progress' %}edv-badge-blue{% else %}edv-badge-amber{% endif %}">
+              {{ p.project_status or 'Pending' }}
+            </span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    {% else %}
+      <div class="edv-card edv-empty">No projects yet</div>
+    {% endif %}
+  </div>
+
+  <!-- Recent Estimates -->
+  <div class="edv-section">
+    <div class="edv-section-title">
+      Recent estimates
+      <a href="/portal/estimates">View all &rsaquo;</a>
+    </div>
+    {% if estimates %}
+      {% for e in estimates %}
+      <a href="/portal/estimates/{{ e.name }}" style="text-decoration:none;">
+        <div class="edv-card">
+          <div class="edv-card-row">
+            <div>
+              <h4>{{ e.name }}</h4>
+              <p class="sub">{{ e.service }} &middot; {{ e.estimate_date }}</p>
+            </div>
+            <div style="text-align:right;">
+              <span class="edv-badge {% if e.estimate_status == 'Approved' %}edv-badge-green{% elif e.estimate_status == 'Draft' %}edv-badge-gray{% elif 'Pending' in (e.estimate_status or '') %}edv-badge-amber{% else %}edv-badge-blue{% endif %}">
+                {{ e.estimate_status }}
+              </span>
+              {% if e.total_price %}<div class="edv-price" style="margin-top:4px;">&#x20B9;{{ "{:,.0f}".format(e.total_price) }}</div>{% endif %}
+            </div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    {% else %}
+      <div class="edv-card edv-empty">No estimates yet</div>
+    {% endif %}
+  </div>
+
+  <!-- Services banner -->
+  <div class="edv-section">
+    <a href="/portal/services" style="text-decoration:none;">
+      <div class="edv-card" style="background:linear-gradient(135deg, rgba(26,60,142,0.05), rgba(51,102,204,0.1)); border-color:rgba(26,60,142,0.15);">
+        <div class="edv-card-row">
+          <div>
+            <h4>{{ service_count }} Services Available</h4>
+            <p class="sub">Browse our service catalog</p>
+          </div>
+          <span style="color:#9ca3af;">&rsaquo;</span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="edv-bottom-spacer"></div>
+
+  <!-- Bottom Navigation -->
+  <div class="edv-nav">
+    <a href="/portal" class="active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>
+      Home
+    </a>
+    <a href="/portal/projects">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+      Projects
+    </a>
+    <a href="/portal/estimates">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+      Estimates
+    </a>
+    <a href="/portal/services">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Services
+    </a>
+    <a href="/portal/settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Settings
+    </a>
+  </div>
+</div>
+{%- endblock -%}

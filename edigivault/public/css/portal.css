@@ -1,0 +1,6 @@
+/* e-DigiVault Portal Styles */
+.web-footer, .navbar { display: none !important; }
+body { background: #F8F9FC !important; }
+.main-section { padding: 0 !important; }
+.container { max-width: 480px !important; padding: 0 !important; }
+[data-page-container] { padding: 0 !important; }
