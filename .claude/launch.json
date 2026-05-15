@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "helpdesk",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [".claude/frappe_proxy.py"],
+      "port": 3000,
+      "autoPort": true
+    }
+  ]
+}
